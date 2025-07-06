@@ -1,0 +1,40 @@
+# Files to exclude from Vercel deployment
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+.env
+.venv/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Local development files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+logs/
+
+# Upload directory (use cloud storage in production)
+uploads/
+
+# Git
+.git/
+.gitignore
+
+# Temporary files
+tmp/
+temp/
+
+# Development README
+README_SIMPLE.md
