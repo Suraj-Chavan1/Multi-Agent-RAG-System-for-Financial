@@ -4,7 +4,7 @@ from typing import Optional
 import json
 
 # Set your Gemini API Key
-os.environ["GOOGLE_API_KEY"] = "AIzaSyC3IXA3iozcl21EN93PEKAnsYKX7CbV7fQ"  # 🔁 Replace with your actual key
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 
 from langchain_google_genai import ChatGoogleGenerativeAI  # ✅ Gemini LLM
 
