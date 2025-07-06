@@ -57,11 +57,21 @@ logger = logging.getLogger(__name__)
 # INITIALIZE LLM
 # =============================================================================
 
+# Load environment variables for LLM configuration
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+if not GEMINI_API_KEY:
+    raise EnvironmentError("GEMINI_API_KEY not found in environment variables")
+
 llm = ChatGoogleGenerativeAI(
     model="gemini-2.5-flash",
     temperature=0.0,
     max_tokens=4000,
-    verbose=False
+    verbose=False,
+    google_api_key=GEMINI_API_KEY
 )
 
 class LangGraphOrchestrator:

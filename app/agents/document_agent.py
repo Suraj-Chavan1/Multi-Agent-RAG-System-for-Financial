@@ -58,10 +58,23 @@ def get_pinecone_index():
     
     return index
 
-genai.configure(api_key=GEMINI_API_KEY)
+# Initialize Gemini globally to avoid repeated configuration
+_gemini_configured = False
+
+def configure_gemini():
+    """Configure Gemini AI with API key"""
+    global _gemini_configured
+    if not _gemini_configured:
+        if not GEMINI_API_KEY:
+            raise EnvironmentError("GEMINI_API_KEY not found in environment variables")
+        genai.configure(api_key=GEMINI_API_KEY)
+        _gemini_configured = True
+        logger.info("Gemini AI configured successfully")
 
 class DocumentAgent:
     def __init__(self):
+        # Configure Gemini when the agent is initialized
+        configure_gemini()
         self.generation_model = genai.GenerativeModel(model_name=GEMINI_MODEL_NAME)
         self.text_splitter = RecursiveCharacterTextSplitter(
             chunk_size=1000,

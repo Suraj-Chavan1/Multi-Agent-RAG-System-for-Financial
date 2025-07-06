@@ -9,7 +9,17 @@ from typing import Dict, Any, List, Optional
 from datetime import datetime
 from pathlib import Path
 from dotenv import load_dotenv
+
+# Load environment variables first
 load_dotenv()
+
+# Import and validate configuration
+try:
+    from config import Config
+    Config.validate()
+except EnvironmentError as e:
+    logging.error(f"Configuration error: {e}")
+    # Allow app to start but log the error
 
 from fastapi import FastAPI, HTTPException, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
@@ -70,8 +80,33 @@ async def root():
 
 @app.get("/health")
 async def health_check():
-    """Health check"""
-    return {"status": "healthy", "timestamp": datetime.now().isoformat()}
+    """Health check with environment validation"""
+    try:
+        from config import Config
+        Config.validate()
+        return {
+            "status": "healthy", 
+            "timestamp": datetime.now().isoformat(),
+            "environment": "configured"
+        }
+    except Exception as e:
+        return {
+            "status": "unhealthy",
+            "timestamp": datetime.now().isoformat(),
+            "error": str(e),
+            "environment": "misconfigured"
+        }
+
+@app.get("/config-check")
+async def config_check():
+    """Check configuration status (for debugging)"""
+    import os
+    return {
+        "pinecone_api_key": "✓ Set" if os.getenv("PINECONE_API_KEY") else "✗ Missing",
+        "gemini_api_key": "✓ Set" if os.getenv("GEMINI_API_KEY") else "✗ Missing",
+        "pinecone_index": os.getenv("PINECONE_INDEX_NAME", "Not set"),
+        "gemini_model": os.getenv("GEMINI_MODEL_NAME", "Not set"),
+    }
 
 @app.post("/query", response_model=QueryResponse)
 async def query(request: QueryRequest):
