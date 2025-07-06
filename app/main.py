@@ -8,6 +8,8 @@ import shutil
 from typing import Dict, Any, List, Optional
 from datetime import datetime
 from pathlib import Path
+from dotenv import load_dotenv
+load_dotenv()
 
 from fastapi import FastAPI, HTTPException, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
@@ -15,7 +17,8 @@ from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 import uvicorn
 
-from orchestrator import process_financial_query
+# Remove this heavy import from startup
+# from orchestrator import process_financial_query
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -78,6 +81,9 @@ async def query(request: QueryRequest):
     try:
         logger.info(f"Query: {request.question[:50]}... | Symbol: {request.symbol} | Documents: {request.document_ids}")
         
+        # Lazy import - only import when needed
+        from orchestrator import process_financial_query
+        
         # Route through orchestrator
         result = await process_financial_query(
             question=request.question,
@@ -115,7 +121,7 @@ async def upload_document(
         with open(file_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
         
-        # Process with DocumentAgent (no symbol required)
+        # Lazy import - only import when needed
         from agents.document_agent import DocumentAgent
         agent = DocumentAgent()
         result = await agent.upload_document(
@@ -139,6 +145,7 @@ async def upload_document(
 async def list_documents():
     """List all uploaded documents"""
     try:
+        # Lazy import - only import when needed
         from agents.document_agent import DocumentAgent
         agent = DocumentAgent()
         result = await agent.list_documents()

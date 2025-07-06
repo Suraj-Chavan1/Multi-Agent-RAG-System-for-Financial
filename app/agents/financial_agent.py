@@ -2,11 +2,20 @@ import os
 import yfinance as yf
 from typing import Optional
 import json
+from dotenv import load_dotenv
 
-# Set your Gemini API Key
-GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+# Load environment variables
+load_dotenv()
 
 from langchain_google_genai import ChatGoogleGenerativeAI  # ✅ Gemini LLM
+
+# Set your Gemini API Key - FIXED: Use GEMINI_API_KEY to match your .env file
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+
+# Add debug line to check if API key is loaded
+print(f"DEBUG: GEMINI_API_KEY loaded: {'Yes' if GEMINI_API_KEY else 'No'}")
+if GEMINI_API_KEY:
+    print(f"DEBUG: API Key starts with: {GEMINI_API_KEY[:10]}...")
 
 # --- TOOL: Fetch Specific Financial Report ---
 def fetch_financial_report(symbol: str, report_type: str) -> str:
@@ -69,10 +78,16 @@ def list_available_reports(symbol: str) -> str:
         return f"Error listing available reports: {e}"
 
 # --- Gemini LLM Configuration ---
-llm = ChatGoogleGenerativeAI(
-    model="gemini-2.5-flash",
-    temperature=0.1
-)
+try:
+    llm = ChatGoogleGenerativeAI(
+        model="gemini-2.5-flash",
+        temperature=0.1,
+        google_api_key=GEMINI_API_KEY
+    )
+    print("DEBUG: LLM initialized successfully")
+except Exception as e:
+    print(f"DEBUG: LLM initialization error: {e}")
+    llm = None
 
 # --- Tool Functions Dictionary ---
 available_tools = {
@@ -149,10 +164,14 @@ Please format your response in a user-friendly way and highlight key insights.
 """
         
         try:
+            if self.llm is None:
+                return f"LLM not available. Raw data for {symbol}:\n{result}"
+            
             response = await self.llm.ainvoke(final_prompt)
             return response.content if hasattr(response, 'content') else str(response)
         except Exception as e:
             # Fallback to raw data if LLM fails
+            print(f"DEBUG: LLM error: {e}")
             return f"Data for {symbol}:\n{result}"
 
 # Create a global instance for backward compatibility
