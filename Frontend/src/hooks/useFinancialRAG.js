@@ -1,7 +1,7 @@
 // Custom hook for managing chat and document state
 import { useState, useEffect } from 'react'
 
-const API_BASE_URL = 'http://localhost:8000'
+const API_BASE_URL = 'https://multi-agent-rag-system-for-financial-2.onrender.com/'
 
 export const useFinancialRAG = () => {
   // State management
