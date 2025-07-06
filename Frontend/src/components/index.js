@@ -1,0 +1,13 @@
+// Component exports for easier imports
+export { default as Header } from './Header'
+export { default as Sidebar } from './Sidebar'
+export { default as SymbolInput } from './SymbolInput'
+export { default as DocumentUpload } from './DocumentUpload'
+export { default as DocumentList } from './DocumentList'
+export { default as SelectedDocumentsInfo } from './SelectedDocumentsInfo'
+export { default as ChatContainer } from './ChatContainer'
+export { default as ChatArea } from './ChatArea'
+export { default as ChatInput } from './ChatInput'
+export { default as Message } from './Message'
+export { default as WelcomeMessage } from './WelcomeMessage'
+export { default as LoadingIndicator } from './LoadingIndicator'
