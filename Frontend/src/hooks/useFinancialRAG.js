@@ -1,7 +1,10 @@
 // Custom hook for managing chat and document state
 import { useState, useEffect } from 'react'
 
-const API_BASE_URL = 'https://intern-9a5x.onrender.com'
+// API configuration - uses environment variable or fallback
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://intern-9a5x.onrender.com'
+
+console.log('API Base URL:', API_BASE_URL) // For debugging
 
 export const useFinancialRAG = () => {
   // State management
